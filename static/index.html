@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Local Webpage</title>
+</head>
+
+<body>
+    <h1>Data from FastAPI</h1>
+    <div id="data-container"></div>
+
+    <script>
+        fetch('http://localhost:8000/get_data')
+            .then(response => response.json())
+            .then(data => {
+                const dataContainer = document.getElementById('data-container');
+                dataContainer.innerHTML = JSON.stringify(data, null, 2);
+            })
+            .catch(error => console.error(error));
+    </script>
+</body>
+
+</html>
