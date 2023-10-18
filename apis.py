@@ -24,4 +24,7 @@ def get_data():
 
     conn.close()
 
+
+    
+
     return {"data": data}
