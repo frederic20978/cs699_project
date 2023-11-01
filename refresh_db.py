@@ -1,52 +1,76 @@
 import psycopg2
+from psycopg2.extensions import AsIs
 from bs4 import BeautifulSoup
 import requests
 
-def refresh_data(data):
+def update_db(data,sector):
     conn = psycopg2.connect(
         dbname="699_project",
         user="fred",
         password="4004",
         host="localhost"
     )
-
     cursor = conn.cursor()
-    cursor.execute("DELETE FROM stock_data")
+
+    cursor.execute("DROP TABLE IF EXISTS %s",(AsIs(sector),))
     conn.commit()
-    # create table columns
+
+    # Create table columns
     cursor.execute("""
-    CREATE TABLE IF NOT EXISTS stock_data (
+    CREATE TABLE IF NOT EXISTS %s (
         id SERIAL PRIMARY KEY,
         name VARCHAR(255),
-        value VARCHAR(255)
+        cmp FLOAT,
+        pe FLOAT,
+        market_cap FLOAT,
+        div_yield FLOAT,
+        np_qtr FLOAT,
+        qtr_profit_var FLOAT,
+        sales FLOAT,
+        sales_var FLOAT,
+        roce FLOAT
     )
-    """)
+    """,(AsIs(sector),))
     conn.commit()
 
+    # Insert new data
     for entry in data:
-        cursor.execute("INSERT INTO stock_data (name, value) VALUES (%s, %s)", (entry['name'], entry['value']))
+        cursor.execute("""
+        INSERT INTO stock_data (name, cmp, pe, market_cap, div_yield, np_qtr, qtr_profit_var, sales, sales_var, roce) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        """, (entry['name'], entry['cmp'], entry['pe'], entry['market_cap'], entry['div_yield'], entry['np_qtr'], entry['qtr_profit_var'], entry['sales'], entry['sales_var'], entry['roce']))
     conn.commit()
 
-def main():
-    url = "https://www.ndtv.com/business/marketdata/stocks-gainers/nifty_monthly"
+def scrap_data(url):
     response = requests.get(url)
     html_content = response.text
-    # soup = BeautifulSoup(html_content, 'html.parser')
-    with open('output.txt', 'w', encoding='utf-8') as file:
-        file.write(html_content)
-
     soup = BeautifulSoup(html_content, 'html.parser')
-    green_btn_elements = soup.find_all(class_="green-btn")
+    rows = soup.find_all('tr', attrs={'data-row-company-id': True})
 
-    # Extract the names of the stocks and numbers
-    stocks= []
+    data = []
+    # Loop over the rows
+    for row in rows:
+        # Find all 'td' elements in this row
+        cols = row.find_all('td')
+        
+        # Extract the data
+        content = { "name" : cols[1].text.strip(),
+            "cmp" : float(cols[2].text.strip()),
+            "pe" : float(cols[3].text.strip()),
+            "market_cap" :float(cols[4].text.strip()),
+            "div_yield" : float(cols[5].text.strip()),
+            "np_qtr" : float(cols[6].text.strip()),
+            "qtr_profit_var" : float(cols[7].text.strip()),
+            "sales" : float(cols[8].text.strip()),
+            "sales_var" : float(cols[9].text.strip()),
+            "roce" : float(cols[10].text.strip()),
+        }
+        data.append(content)
+    return data
 
-    for element in green_btn_elements:
-        stock_name = element.find_previous("a").get_text()
-        number = element.get_text()
-        stocks.append({"name":stock_name,"value":number})
-    
-    stocks = list(filter(lambda x: x["value"].count("%")==1,stocks))
-    refresh_data(stocks)
+def main():
+    data = scrap_data("https://www.screener.in/company/compare/00000034/00000027/")
+    update_db(data,"computer_software")
 
-main()
+if __name__== "__main__":
+    main()

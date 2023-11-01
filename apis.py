@@ -6,7 +6,7 @@ app = FastAPI()
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
-@app.get("/get_data")
+@app.get("/get_data/computer_software")
 def get_data():
     # Connect to PostgreSQL
     conn = psycopg2.connect(
