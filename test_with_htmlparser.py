@@ -36,7 +36,7 @@ def main():
 def update_db(data):
     table_name = "computer_software"
 
-    engine = create_engine('postgresql://fred:4004@localhost/699_project')
+    engine = create_engine('postgresql://fred:4004@localhost/699_project',isolation_level="AUTOCOMMIT")
 
     # conn = psycopg2.connect(
     #     dbname="699_project",
@@ -48,14 +48,16 @@ def update_db(data):
     # Initialize metadata
     metadata = MetaData()
 
-    # Use inspect to check if table exists
+    # Check if the table exists
     inspector = inspect(engine)
     if inspector.has_table(table_name):
-        # If table exists, drop it
-        table = Table(table_name, metadata, autoload_with=engine)
-        table.drop(engine, checkfirst=True)
+        # If the table exists, drop it
+        engine.execute(f"DROP TABLE {table_name}")
+        print(f"Table '{table_name}' has been dropped.")
+    else:
+        print(f"Table '{table_name}' does not exist.")
 
-    # Load table
+    # Create table
     table = Table(table_name, metadata,
                   Column('name', String),
             Column('cmp', Float),
