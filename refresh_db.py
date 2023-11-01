@@ -1,45 +1,62 @@
-import psycopg2
-from psycopg2.extensions import AsIs
+from sqlalchemy import create_engine, Table, MetaData, Column, String, Float, inspect
+from sqlalchemy.sql import text
 from bs4 import BeautifulSoup
 import requests
 
-def update_db(data,sector):
-    conn = psycopg2.connect(
-        dbname="699_project",
-        user="fred",
-        password="4004",
-        host="localhost"
-    )
-    cursor = conn.cursor()
+def update_db(data,table_name):
+    #     dbname="699_project",
+    #     user="fred",
+    #     password="4004",
+    #     host="localhost"
+    engine = create_engine('postgresql://fred:4004@localhost/699_project',isolation_level="AUTOCOMMIT")
+    
+    # Initialize metadata
+    metadata = MetaData()
 
-    cursor.execute("DROP TABLE IF EXISTS %s",(AsIs(sector),))
-    conn.commit()
+    # Check if the table exists
+    inspector = inspect(engine)
+    if inspector.has_table(table_name):
+        # If the table exists, drop it
+        with engine.connect() as connection:
+            drop_table_sql = text(f"DROP TABLE IF EXISTS {table_name}")
+            connection.execute(drop_table_sql)
+        print(f"Table '{table_name}' has been dropped.")
+    else:
+        print(f"Table '{table_name}' does not exist.")
 
-    # Create table columns
-    cursor.execute("""
-    CREATE TABLE IF NOT EXISTS %s (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(255),
-        cmp FLOAT,
-        pe FLOAT,
-        market_cap FLOAT,
-        div_yield FLOAT,
-        np_qtr FLOAT,
-        qtr_profit_var FLOAT,
-        sales FLOAT,
-        sales_var FLOAT,
-        roce FLOAT
-    )
-    """,(AsIs(sector),))
-    conn.commit()
+    # Create table
+    table = Table(table_name, metadata,
+                  Column('name', String),
+            Column('cmp', Float),
+            Column('pe', Float),
+            Column('market_cap', Float),
+            Column('div_yield', Float),
+            Column('np_qtr', Float),
+            Column('qtr_profit_var', Float),
+            Column('sales', Float),
+            Column('sales_var', Float),
+            Column('roce', Float))
+    metadata.create_all(engine)
 
-    # Insert new data
-    for entry in data:
-        cursor.execute("""
-        INSERT INTO stock_data (name, cmp, pe, market_cap, div_yield, np_qtr, qtr_profit_var, sales, sales_var, roce) 
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """, (entry['name'], entry['cmp'], entry['pe'], entry['market_cap'], entry['div_yield'], entry['np_qtr'], entry['qtr_profit_var'], entry['sales'], entry['sales_var'], entry['roce']))
-    conn.commit()
+    # Start a new session   
+    with engine.connect() as connection:
+        # Iterate over data entries
+        for entry in data:
+            # Build insert statement
+            stmt = table.insert().values(
+                name=entry['name'], 
+                cmp=entry['cmp'], 
+                pe=entry['pe'], 
+                market_cap=entry['market_cap'], 
+                div_yield=entry['div_yield'], 
+                np_qtr=entry['np_qtr'], 
+                qtr_profit_var=entry['qtr_profit_var'], 
+                sales=entry['sales'], 
+                sales_var=entry['sales_var'], 
+                roce=entry['roce']
+            )
+            # Execute insert statement
+            connection.execute(stmt)
 
 def scrap_data(url):
     response = requests.get(url)
@@ -71,6 +88,9 @@ def scrap_data(url):
 def main():
     data = scrap_data("https://www.screener.in/company/compare/00000034/00000027/")
     update_db(data,"computer_software")
+    
+    data = scrap_data("https://www.screener.in/company/compare/00000057/00000084/")
+    update_db(data,"steel")
 
 if __name__== "__main__":
     main()

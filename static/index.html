@@ -6,14 +6,23 @@
 </head>
 
 <body>
-    <h2>IT COMPUTER SOFTWARE LARGE COMPANIES</h2>
-    <div id="data-container"></div>
+    <h2>IT COMPUTER SOFTWARE - LARGE COMPANIES</h2>
+    <div id="data-container-it"></div>
+    <h2>STEEL - LARGE COMPANIES</h2>
+    <div id="data-container-steel"></div>
 
     <script>
             fetch('http://localhost:8000/get_data/computer_software')
             .then(response => response.json())
             .then(data => {
-                const dataContainer = document.getElementById('data-container');
+                const dataContainer = document.getElementById('data-container-it');
+                dataContainer.innerHTML = JSON.stringify(data, null, 2);
+            })
+                        .catch(error => console.error(error));
+                    fetch('http://localhost:8000/get_data/steel')
+                        .then(response => response.json())
+                        .then(data => {
+                            const dataContainer = document.getElementById('data-container-steel');
                 dataContainer.innerHTML = JSON.stringify(data, null, 2);
             })
             .catch(error => console.error(error));

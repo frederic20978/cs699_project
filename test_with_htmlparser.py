@@ -52,7 +52,9 @@ def update_db(data):
     inspector = inspect(engine)
     if inspector.has_table(table_name):
         # If the table exists, drop it
-        engine.execute(f"DROP TABLE {table_name}")
+        with engine.connect() as connection:
+            drop_table_sql = text(f"DROP TABLE IF EXISTS {table_name}")
+            connection.execute(drop_table_sql)
         print(f"Table '{table_name}' has been dropped.")
     else:
         print(f"Table '{table_name}' does not exist.")
