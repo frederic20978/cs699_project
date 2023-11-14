@@ -1,6 +1,7 @@
 from sqlalchemy import create_engine, Table, MetaData, Column, String, Float, inspect
 from sqlalchemy.sql import text
 from bs4 import BeautifulSoup
+import matplotlib.pyplot as plt
 import requests
 
 def update_db(data,table_name):
@@ -85,12 +86,28 @@ def scrap_data(url):
         data.append(content)
     return data
 
+def create_visuals(data,domain):
+    name = [entry['name'] for entry in data]
+    profits = [entry['np_qtr'] for entry in data]
+    # Create a bar graph
+    plt.bar(names, profits)
+
+    plt.title('Net Profits of Companies')
+    plt.xlabel('Company')
+    plt.ylabel('Net Profit')
+
+    # Display the graph
+    plt.show()
+
+
 def main():
     data = scrap_data("https://www.screener.in/company/compare/00000034/00000027/")
     update_db(data,"computer_software")
+    create_visuals(data,"computer_software")
     
     data = scrap_data("https://www.screener.in/company/compare/00000057/00000084/")
     update_db(data,"steel")
+
 
 if __name__== "__main__":
     main()

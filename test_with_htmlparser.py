@@ -1,6 +1,60 @@
 from bs4 import BeautifulSoup
 from sqlalchemy import create_engine, Table, MetaData, Column, String, Float, inspect
 from sqlalchemy.sql import text
+import matplotlib.pyplot as plt
+
+def create_visuals(data,domain="computer_software"):
+    name = [entry['name'] for entry in data]
+
+    # #for profits
+
+    profits = [entry['np_qtr'] for entry in data]
+    # Create a bar graph
+    plt.bar(name, profits)
+    plt.title('Net Profits of Companies')
+    plt.xlabel('Company')
+    plt.ylabel('Net Profit')
+    # Rotate x-axis labels
+    plt.xticks(rotation=90)
+    # Adjust bottom margin
+    plt.gcf().subplots_adjust(bottom=0.35)
+
+    # Save the graph
+    plt.savefig(f'static/{domain}_net_profits.png')
+    plt.clf()
+
+    #for p/e ratio
+    pe = [entry['pe'] for entry in data]
+    # Create a bar graph
+    plt.bar(name, pe)
+    plt.title('P/E ratio of Companies')
+    plt.xlabel('Company')
+    plt.ylabel('P/E')
+    # Rotate x-axis labels
+    plt.xticks(rotation=90)
+    # Adjust bottom margin
+    plt.gcf().subplots_adjust(bottom=0.35)
+
+    # Save the graph
+    plt.savefig(f'static/{domain}_pe.png')
+    plt.clf()
+
+    #for sales ratio
+    sales = [entry['sales'] for entry in data]
+    # Create a bar graph
+    plt.bar(name, sales)
+    plt.title('Sales of Companies')
+    plt.xlabel('Company')
+    plt.ylabel('Sales')
+    # Rotate x-axis labels
+    plt.xticks(rotation=90)
+    # Adjust bottom margin
+    plt.gcf().subplots_adjust(bottom=0.35)
+
+    # Save the graph
+    plt.savefig(f'static/{domain}_sales.png')
+
+
 
 def main():
     with open('output.txt', 'r', encoding='utf-8') as file:
@@ -31,7 +85,8 @@ def main():
         }
         data.append(content)
     
-    update_db(data)
+    # update_db(data)
+    create_visuals(data)
 
 def update_db(data):
     table_name = "computer_software"
