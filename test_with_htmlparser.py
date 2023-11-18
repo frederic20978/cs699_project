@@ -6,16 +6,18 @@ import matplotlib.pyplot as plt
 def create_visuals(data,domain="computer_software"):
     name = [entry['name'] for entry in data]
 
-    # #for profits
-
+    #for profits
     profits = [entry['np_qtr'] for entry in data]
+
     # Create a bar graph
     plt.bar(name, profits)
     plt.title('Net Profits of Companies')
     plt.xlabel('Company')
     plt.ylabel('Net Profit')
+
     # Rotate x-axis labels
     plt.xticks(rotation=90)
+
     # Adjust bottom margin
     plt.gcf().subplots_adjust(bottom=0.35)
 
@@ -25,13 +27,16 @@ def create_visuals(data,domain="computer_software"):
 
     #for p/e ratio
     pe = [entry['pe'] for entry in data]
+
     # Create a bar graph
     plt.bar(name, pe)
     plt.title('P/E ratio of Companies')
     plt.xlabel('Company')
     plt.ylabel('P/E')
+
     # Rotate x-axis labels
     plt.xticks(rotation=90)
+
     # Adjust bottom margin
     plt.gcf().subplots_adjust(bottom=0.35)
 
@@ -41,18 +46,33 @@ def create_visuals(data,domain="computer_software"):
 
     #for sales ratio
     sales = [entry['sales'] for entry in data]
+
     # Create a bar graph
     plt.bar(name, sales)
     plt.title('Sales of Companies')
     plt.xlabel('Company')
     plt.ylabel('Sales')
+
     # Rotate x-axis labels
     plt.xticks(rotation=90)
+
     # Adjust bottom margin
     plt.gcf().subplots_adjust(bottom=0.35)
 
     # Save the graph
     plt.savefig(f'static/{domain}_sales.png')
+    plt.clf()
+
+    #for market_cap
+    market_cap = [entry['market_cap'] for entry in data]
+
+    # Create a pie chart
+    plt.pie(market_cap, labels=name, autopct='%1.1f%%')
+
+    plt.title('Market Capitalization of Companies')
+
+    # Save the graph
+    plt.savefig(f'static/{domain}_market_cap.png')
 
 
 

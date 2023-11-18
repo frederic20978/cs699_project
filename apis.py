@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+import pandas as pd
 from fastapi.staticfiles import StaticFiles
 import psycopg2
 from sqlalchemy import create_engine, text
@@ -35,6 +36,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def get_data():
     #Calling function to fetch data form database
     data = fetch_data("computer_software")
+    
     return {"data": data}
 
 @app.get("/get_data/steel")

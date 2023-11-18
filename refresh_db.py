@@ -86,18 +86,76 @@ def scrap_data(url):
         data.append(content)
     return data
 
-def create_visuals(data,domain):
+def create_visuals(data,domain="computer_software"):
     name = [entry['name'] for entry in data]
-    profits = [entry['np_qtr'] for entry in data]
-    # Create a bar graph
-    plt.bar(names, profits)
 
+    #for profits
+    profits = [entry['np_qtr'] for entry in data]
+
+    # Create a bar graph
+    plt.bar(name, profits)
     plt.title('Net Profits of Companies')
     plt.xlabel('Company')
     plt.ylabel('Net Profit')
 
-    # Display the graph
-    plt.show()
+    # Rotate x-axis labels
+    plt.xticks(rotation=90)
+
+    # Adjust bottom margin
+    plt.gcf().subplots_adjust(bottom=0.35)
+
+    # Save the graph
+    plt.savefig(f'static/{domain}_net_profits.png')
+    plt.clf()
+
+    #for p/e ratio
+    pe = [entry['pe'] for entry in data]
+
+    # Create a bar graph
+    plt.bar(name, pe)
+    plt.title('P/E ratio of Companies')
+    plt.xlabel('Company')
+    plt.ylabel('P/E')
+
+    # Rotate x-axis labels
+    plt.xticks(rotation=90)
+
+    # Adjust bottom margin
+    plt.gcf().subplots_adjust(bottom=0.35)
+
+    # Save the graph
+    plt.savefig(f'static/{domain}_pe.png')
+    plt.clf()
+
+    #for sales ratio
+    sales = [entry['sales'] for entry in data]
+
+    # Create a bar graph
+    plt.bar(name, sales)
+    plt.title('Sales of Companies')
+    plt.xlabel('Company')
+    plt.ylabel('Sales')
+
+    # Rotate x-axis labels
+    plt.xticks(rotation=90)
+
+    # Adjust bottom margin
+    plt.gcf().subplots_adjust(bottom=0.35)
+
+    # Save the graph
+    plt.savefig(f'static/{domain}_sales.png')
+    plt.clf()
+
+    #for market_cap
+    market_cap = [entry['market_cap'] for entry in data]
+
+    # Create a pie chart
+    plt.pie(market_cap, labels=name, autopct='%1.1f%%')
+
+    plt.title('Market Capitalization of Companies')
+
+    # Save the graph
+    plt.savefig(f'static/{domain}_market_cap.png')
 
 
 def main():
@@ -107,6 +165,7 @@ def main():
     
     data = scrap_data("https://www.screener.in/company/compare/00000057/00000084/")
     update_db(data,"steel")
+    create_visuals(data,"steel")
 
 
 if __name__== "__main__":
