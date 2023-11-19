@@ -68,7 +68,7 @@ def create_visuals(data,domain="computer_software"):
 
     # Create a pie chart
     plt.pie(market_cap, labels=name, autopct='%1.1f%%')
-
+    plt.gcf().subplots_adjust(bottom=0)
     plt.title('Market Capitalization of Companies')
 
     # Save the graph

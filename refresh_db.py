@@ -88,13 +88,14 @@ def scrap_data(url):
 
 def create_visuals(data,domain="computer_software"):
     name = [entry['name'] for entry in data]
+    total_mrkt_cap = sum(entry['market_cap'] for entry in data)
 
     #for profits
-    profits = [entry['np_qtr'] for entry in data]
+    profits = [entry['np_qtr']/(100*(entry['market_cap']/total_mrkt_cap)) for entry in data]
 
     # Create a bar graph
     plt.bar(name, profits)
-    plt.title('Net Profits of Companies')
+    plt.title('Market Cap-Weighted Net Profit')
     plt.xlabel('Company')
     plt.ylabel('Net Profit')
 
@@ -105,14 +106,14 @@ def create_visuals(data,domain="computer_software"):
     plt.gcf().subplots_adjust(bottom=0.35)
 
     # Save the graph
-    plt.savefig(f'static/{domain}_net_profits.png')
+    plt.savefig(f'static/images/{domain}_net_profits.png')
     plt.clf()
 
     #for p/e ratio
     pe = [entry['pe'] for entry in data]
 
     # Create a bar graph
-    plt.bar(name, pe)
+    plt.plot(name, pe, marker='o', linestyle='-')
     plt.title('P/E ratio of Companies')
     plt.xlabel('Company')
     plt.ylabel('P/E')
@@ -124,15 +125,15 @@ def create_visuals(data,domain="computer_software"):
     plt.gcf().subplots_adjust(bottom=0.35)
 
     # Save the graph
-    plt.savefig(f'static/{domain}_pe.png')
+    plt.savefig(f'static/images/{domain}_pe.png')
     plt.clf()
 
     #for sales ratio
-    sales = [entry['sales'] for entry in data]
+    sales = [entry['sales']/(100*(entry['market_cap']/total_mrkt_cap)) for entry in data]
 
     # Create a bar graph
     plt.bar(name, sales)
-    plt.title('Sales of Companies')
+    plt.title('Sales of Companies Normalized')
     plt.xlabel('Company')
     plt.ylabel('Sales')
 
@@ -143,7 +144,7 @@ def create_visuals(data,domain="computer_software"):
     plt.gcf().subplots_adjust(bottom=0.35)
 
     # Save the graph
-    plt.savefig(f'static/{domain}_sales.png')
+    plt.savefig(f'static/images/{domain}_sales.png')
     plt.clf()
 
     #for market_cap
@@ -151,11 +152,12 @@ def create_visuals(data,domain="computer_software"):
 
     # Create a pie chart
     plt.pie(market_cap, labels=name, autopct='%1.1f%%')
-
+    plt.gcf().subplots_adjust(bottom=0)
     plt.title('Market Capitalization of Companies')
 
     # Save the graph
-    plt.savefig(f'static/{domain}_market_cap.png')
+    plt.savefig(f'static/images/{domain}_market_cap.png')
+    plt.clf()
 
 
 def main():

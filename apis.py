@@ -1,7 +1,6 @@
 from fastapi import FastAPI
-import pandas as pd
+import numpy as np
 from fastapi.staticfiles import StaticFiles
-import psycopg2
 from sqlalchemy import create_engine, text
 
 # Replace these values with your actual database connection details
@@ -36,11 +35,78 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 def get_data():
     #Calling function to fetch data form database
     data = fetch_data("computer_software")
-    
-    return {"data": data}
+    #prefernce list
+    preference = [0, -3, 0, 1, 1, 0, 1, 0, 2]
+
+    # Separate the names and the numeric data
+    numeric_data = [entry[1:] for entry in data]
+
+    # Convert the numeric data to a numpy array
+    numeric_data = np.array(numeric_data)
+
+    total_mrkt_cap = sum(entry[2] for entry in data)
+
+    for entry in data:
+    # Update 'np_qtr' normalising with market cap
+        entry[4] = entry[4] / (100 * (entry[2] / total_mrkt_cap))
+
+    for entry in data:
+    # Update 'np_qtr' normalising with market cap
+        entry[6] = entry[6] / (100 * (entry[2] / total_mrkt_cap))
+   
+    # Normalize the numeric data
+    data_normalized = (numeric_data - np.min(numeric_data, axis=0)) / (np.max(numeric_data, axis=0) - np.min(numeric_data, axis=0)) 
+
+    # Calculate the score for each stock
+    scores = np.sum(data_normalized * preference, axis=1)
+
+    #normalize
+    softmax_scores = np.exp(scores) / np.sum(np.exp(scores), axis=0)
+
+    # Combine the scores with the stock names
+    data_scored = list(zip(np.array(data)[:, 0], softmax_scores))
+
+    # Sort the stocks by score
+    data_scored.sort(key=lambda x: x[1], reverse=True)
+
+    return {"data": data,"preference":data_scored}
 
 @app.get("/get_data/steel")
 def get_data():
     #Calling function to fetch data form database
     data = fetch_data("steel")
-    return {"data": data}
+    #prefernce list
+    preference = [0, -3, 0, 1, 1, 0, 1, 0, 2]
+
+    # Separate the names and the numeric data
+    numeric_data = [entry[1:] for entry in data]
+
+    # Convert the numeric data to a numpy array
+    numeric_data = np.array(numeric_data)
+
+    total_mrkt_cap = sum(entry[2] for entry in data)
+
+    for entry in data:
+    # Update 'np_qtr' normalising with market cap
+        entry[4] = entry[4] / (100 * (entry[2] / total_mrkt_cap))
+
+    for entry in data:
+    # Update 'np_qtr' normalising with market cap
+        entry[6] = entry[6] / (100 * (entry[2] / total_mrkt_cap))
+   
+    # Normalize the numeric data
+    data_normalized = (numeric_data - np.min(numeric_data, axis=0)) / (np.max(numeric_data, axis=0) - np.min(numeric_data, axis=0)) 
+
+    # Calculate the score for each stock
+    scores = np.sum(data_normalized * preference, axis=1)
+
+    #normalize
+    softmax_scores = np.exp(scores) / np.sum(np.exp(scores), axis=0)
+
+    # Combine the scores with the stock names
+    data_scored = list(zip(np.array(data)[:, 0], softmax_scores))
+
+    # Sort the stocks by score
+    data_scored.sort(key=lambda x: x[1], reverse=True)
+
+    return {"data": data,"preference":data_scored}
