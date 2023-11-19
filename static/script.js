@@ -86,6 +86,7 @@ async function fetchData(apiUrl, industry) {
             }, {});
             suggestionMessage = suggestedCompanies.length + " of the companies are outperforming.Its suggested to invest in them."
             console.log(distribution);
+
             // Update suggestion message content
             const suggestionMessageElement = document.getElementById("suggestionMessage");
             suggestionMessageElement.textContent = suggestionMessage;
@@ -101,7 +102,7 @@ async function fetchData(apiUrl, industry) {
             // Loop through the distribution object and create list items
             for (const company in distribution) {
                 const listItemElement = document.createElement("li");
-                listItemElement.textContent = `${company}: ${distribution[company]}`;
+                listItemElement.textContent = `${company}: ${distribution[company]}%`;
                 distributionListElement.appendChild(listItemElement);
             }
         } else {
@@ -125,8 +126,28 @@ async function fetchData(apiUrl, industry) {
                 acc[company.name] = share;
                 return acc;
             }, {});
-            suggestionMessage = "None of the companies are outperforming others. Its wise to split the share among 3 of the top"
+            suggestionMessage = "No one of the companies are outperforming others. Its wise to split the share among 3 of the top"
             console.log(distribution);
+
+            // Update suggestion message content
+            const suggestionMessageElement = document.getElementById("suggestionMessage");
+            suggestionMessageElement.textContent = suggestionMessage;
+
+            // Update distribution title content
+            const distributionTitleElement = document.getElementById("distributionTitle");
+            distributionTitleElement.textContent = "Distribution:";
+
+            // Update distribution list content
+            const distributionListElement = document.getElementById("distributionList");
+            distributionListElement.innerHTML = ""; // Clear existing content
+
+            // Loop through the distribution object and create list items
+            for (const company in distribution) {
+                const listItemElement = document.createElement("li");
+
+                listItemElement.textContent = `${company}: ${distribution[company]}%`;
+                distributionListElement.appendChild(listItemElement);
+            }
         }
     } catch (error) {
         console.error('Error fetching data:', error);
@@ -135,5 +156,4 @@ async function fetchData(apiUrl, industry) {
 
 
 // Call the fetchData function for each industry
-// fetchData('http://localhost:8000/get_data/steel', 'steel');
 fetchData('http://localhost:8000/get_data/computer_software', 'computer_software');
