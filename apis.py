@@ -2,6 +2,9 @@ from fastapi import FastAPI
 import numpy as np
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import create_engine, text
+from fastapi.middleware.cors import CORSMiddleware
+
+
 
 def analyse_data(data):
     # prefernce list
@@ -46,7 +49,7 @@ def analyse_data(data):
 
 # Replace these values with your actual database connection details
 def fetch_data(table_name):
-    engine = create_engine('postgresql://fred:4004@localhost/699_project',isolation_level="AUTOCOMMIT")
+    engine = create_engine('postgresql://naveen:473089@localhost/db',isolation_level="AUTOCOMMIT")
 
     # Create a connection to the database
     with engine.connect() as connection:
@@ -64,7 +67,13 @@ def fetch_data(table_name):
     return data
 
 app = FastAPI()
-
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Set this to the specific origin of your frontend in production
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/get_data/computer_software")
