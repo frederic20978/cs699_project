@@ -9,7 +9,7 @@ def update_db(data,table_name):
     #     user="fred",
     #     password="4004",
     #     host="localhost"
-    engine = create_engine('postgresql://fred:4004@localhost/699_project',isolation_level="AUTOCOMMIT")
+    engine = create_engine('postgresql://naveen:473089@localhost/db',isolation_level="AUTOCOMMIT")
     
     # Initialize metadata
     metadata = MetaData()
