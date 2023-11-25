@@ -1,15 +1,26 @@
 from sqlalchemy import create_engine, Table, MetaData, Column, String, Float, inspect
 from sqlalchemy.sql import text
+from configparser import ConfigParser
 from bs4 import BeautifulSoup
 import matplotlib.pyplot as plt
 import requests
 
 def update_db(data,table_name):
-    #     dbname="699_project",
-    #     user="fred",
-    #     password="4004",
-    #     host="localhost"
-    engine = create_engine('postgresql://naveen:473089@localhost/db',isolation_level="AUTOCOMMIT")
+    # Read the configuration file
+    config = ConfigParser()
+    config.read('config.ini')
+
+    # Get the database connection details
+    username = config['database']['username']
+    password = config['database']['password']
+    host = config['database']['host']
+    database_name = config['database']['database_name']
+
+    # Create the database connection string
+    connection_string = f'postgresql://{username}:{password}@{host}/{database_name}'
+    
+    # Create the SQLAlchemy engine
+    engine = create_engine(connection_string, isolation_level="AUTOCOMMIT")
     
     # Initialize metadata
     metadata = MetaData()
@@ -172,6 +183,10 @@ def main():
     data = scrap_data("https://www.screener.in/company/compare/00000027/")
     update_db(data,"fmcg")
     create_visuals(data,"fmcg")
+
+    # data = scrap_data("https://www.screener.in/company/compare/00000006/00000011/")
+    # update_db(data,"bank")
+    # create_visuals(data,"bank")
 
 if __name__== "__main__":
     main()

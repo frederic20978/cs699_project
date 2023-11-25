@@ -1,7 +1,8 @@
 from bs4 import BeautifulSoup
-import ast
+import sys
 
-def modify_html():
+def modify_html(industry):
+    
     # Read the HTML file
     with open('./static/mypage.html', 'r') as file:
         html_content = file.read()
@@ -10,8 +11,8 @@ def modify_html():
     soup = BeautifulSoup(html_content, 'html.parser')
 
     # Create a new button element
-    new_button = soup.new_tag('button', id='nav_fmcg', onclick="fetchData('http://localhost:8000/get_data/fmcg', 'fmcg')")
-    new_button.string = 'FMCG'
+    new_button = soup.new_tag('button', id=f'nav_{industry}', onclick=f"fetchData('http://localhost:8000/get_data/{industry}', '{industry}')")
+    new_button.string = f'{industry}'
 
     # Find the top-bar div and append the new button
     top_bar_div = soup.find('div', class_='top-bar')
@@ -21,8 +22,8 @@ def modify_html():
     with open('modified_html_file.html', 'w') as file:
         file.write(str(soup))
 
-def modify_fastApi():
-    industry = "fmcg"
+def modify_fastApi(industry):
+    
     with open("apis.py", "a") as file:
         endpoint = f"/get_data/{industry}"
         file.write("\n")
@@ -38,5 +39,5 @@ def modify_fastApi():
     print("Code has been written to routes.py")
 
 if __name__ =="__main__":
-    modify_html()
-    modify_fastApi()
+    modify_html(sys.argv[1])
+    modify_fastApi(sys.argv[1])

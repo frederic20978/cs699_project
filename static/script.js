@@ -11,6 +11,7 @@ async function fetchData(apiUrl, industry) {
         // Add the 'active' class to the clicked button
         document.getElementById('nav_' + industry).classList.add('active');
 
+        // calling the fastapi for data
         const response = await fetch(apiUrl);
         const jsonData = await response.json();
 

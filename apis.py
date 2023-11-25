@@ -62,6 +62,9 @@ def fetch_data(table_name):
     # Create the database connection string
     connection_string = f'postgresql://{username}:{password}@{host}/{database_name}'
 
+    # Create the SQLAlchemy engine
+    engine = create_engine(connection_string, isolation_level="AUTOCOMMIT")
+
     # Create a connection to the database
     with engine.connect() as connection:
         # Define the SQL SELECT statement
