@@ -1,10 +1,9 @@
 from fastapi import FastAPI
 import numpy as np
+from configparser import ConfigParser
 from fastapi.staticfiles import StaticFiles
 from sqlalchemy import create_engine, text
 from fastapi.middleware.cors import CORSMiddleware
-
-
 
 def analyse_data(data):
     # prefernce list
@@ -49,7 +48,19 @@ def analyse_data(data):
 
 # Replace these values with your actual database connection details
 def fetch_data(table_name):
-    engine = create_engine('postgresql://naveen:473089@localhost/db',isolation_level="AUTOCOMMIT")
+
+    # Read the configuration file
+    config = ConfigParser()
+    config.read('config.ini')
+
+    # Get the database connection details
+    username = config['database']['username']
+    password = config['database']['password']
+    host = config['database']['host']
+    database_name = config['database']['database_name']
+
+    # Create the database connection string
+    connection_string = f'postgresql://{username}:{password}@{host}/{database_name}'
 
     # Create a connection to the database
     with engine.connect() as connection:
