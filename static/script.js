@@ -16,6 +16,7 @@ async function fetchData(apiUrl, industry) {
 
         // Extract stock data from the "data" array
         const stockData = jsonData.data;
+        const preferenceData = jsonData.preference;
 
         // Populate the table
         var id = 'stockTable';
@@ -44,8 +45,6 @@ async function fetchData(apiUrl, industry) {
         barGraph3.src = './images/' + industry + '_sales.png';
 
         //suggestion logic:
-
-        const preferenceData = jsonData.preference;
 
         // Threshold to consider a company for suggestion
         const suggestionThreshold = 0.25;
@@ -119,7 +118,7 @@ async function fetchData(apiUrl, industry) {
             // Distribute the total amount based on normalized scores
             const distribution = normalizedScores.reduce((acc, company) => {
                 const share = (company.score / totalNormalizedScore) * totalAmount;
-                acc[company.name] = share;
+                acc[company.name] = Number(share.toFixed(2));
                 return acc;
             }, {});
             suggestionMessage = "No one of the companies are outperforming others. Its wise to split the share among 3 of the top"

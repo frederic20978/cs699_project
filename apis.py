@@ -35,8 +35,11 @@ def analyse_data(data):
     # Combine the scores with the stock names
     data_scored = list(zip(np.array(data)[:, 0], softmax_scores))
 
+    for i, entry in enumerate(data):
+        entry.append(round(softmax_scores[i]*100,2))
+
     # Sort the stocks by score
-    data_scored.sort(key=lambda x: x[1], reverse=True)
+    data.sort(key=lambda x: x[-1], reverse=True)
 
     return {"data": data,"preference":data_scored}
 
