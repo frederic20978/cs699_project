@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Stock Analyst</title>
+        <link href="styles.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+        <div class="top-bar">
+                <button id="nav_steel" onclick="fetchData('http://localhost:8000/get_data/steel', 'steel')">Steel
+                        Industry
+                </button>
+                <button id="nav_computer_software"
+                        onclick="fetchData('http://localhost:8000/get_data/computer_software', 'computer_software')">Computer
+                        Industry
+                </button>
+                <!-- <button id="nav_fmcg" onclick="fetchData('http://localhost:8000/get_data/fmcg', 'fmcg')">FMCG
+        </button> -->
+                <!-- Add buttons for other industries as needed -->
+                <button id="nav_fmcg" onclick="fetchData('http://localhost:8000/get_data/fmcg', 'fmcg')">FMCG</button>
+        </div>
+        <div id="stock_div">
+                <h2>Metrics</h2>
+                <!-- Display the pie chart image -->
+                <div class="pie_chart">
+                        <h3>Market Cap Distribution</h3>
+                        <img alt="Market Cap Distribution" id="pieChart" src="" />
+                </div>
+                <!-- Display row for bar graphs -->
+                <div class="graph-row">
+                        <div>
+                                <h3>PE Ratio</h3>
+                                <img alt="PE Ratio Graph" class="bar_graph" id="barGraph1" src="" />
+                        </div>
+                        <div>
+                                <h3>Net Profit marginalized with market cap</h3>
+                                <img alt="Profit Distribution Graph" class="bar_graph" id="barGraph2" src="" />
+                        </div>
+                        <div>
+                                <h3>Sales marginalized with market cap</h3>
+                                <img alt="Sales Metrics Graph" class="bar_graph" id="barGraph3" src="" />
+                        </div>
+                </div>
+                <h2>Stock Details</h2>
+                <!-- Table to display stock details -->
+                <table id="stockTable">
+                        <thead>
+                                <tr>
+                                        <th>Stocks</th>
+                                        <th>cmp</th>
+                                        <th>P/E</th>
+                                        <th>Market cap</th>
+                                        <th>Divident</th>
+                                        <th>Net profit</th>
+                                        <th>Profit growth</th>
+                                        <th>Sales</th>
+                                        <th>Sales growth</th>
+                                        <th>ROCE</th>
+                                </tr>
+                        </thead>
+                        <tbody id="stock_body">
+                        </tbody>
+                </table>
+        </div>
+        <div class="separator-line"> </div>
+        <div id="preferenceDiv">
+                <h1>OUR SUGGESTION</h1>
+                <p id="suggestionMessage">Invest in Company A (30%)</p>
+                <p id="distributionTitle">Distribution:</p>
+                <h3>
+                        <ul id="distributionList">
+                                <!-- Add list items as needed -->
+                        </ul>
+                </h3>
+        </div>
+        <script src="script.js"></script>
+</body>
+
+</html>

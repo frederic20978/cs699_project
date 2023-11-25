@@ -169,6 +169,9 @@ def main():
     update_db(data,"steel")
     create_visuals(data,"steel")
 
+    data = scrap_data("https://www.screener.in/company/compare/00000027/")
+    update_db(data,"fmcg")
+    create_visuals(data,"fmcg")
 
 if __name__== "__main__":
     main()

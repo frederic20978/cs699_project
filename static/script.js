@@ -91,10 +91,6 @@ async function fetchData(apiUrl, industry) {
             const suggestionMessageElement = document.getElementById("suggestionMessage");
             suggestionMessageElement.textContent = suggestionMessage;
 
-            // Update distribution title content
-            const distributionTitleElement = document.getElementById("distributionTitle");
-            distributionTitleElement.textContent = "Distribution:";
-
             // Update distribution list content
             const distributionListElement = document.getElementById("distributionList");
             distributionListElement.innerHTML = ""; // Clear existing content
@@ -133,10 +129,6 @@ async function fetchData(apiUrl, industry) {
             const suggestionMessageElement = document.getElementById("suggestionMessage");
             suggestionMessageElement.textContent = suggestionMessage;
 
-            // Update distribution title content
-            const distributionTitleElement = document.getElementById("distributionTitle");
-            distributionTitleElement.textContent = "Distribution:";
-
             // Update distribution list content
             const distributionListElement = document.getElementById("distributionList");
             distributionListElement.innerHTML = ""; // Clear existing content
@@ -153,7 +145,6 @@ async function fetchData(apiUrl, industry) {
         console.error('Error fetching data:', error);
     }
 }
-
 
 // Call the fetchData function for each industry
 fetchData('http://localhost:8000/get_data/computer_software', 'computer_software');
